@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Results</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #eef1f7;
+            padding: 40px;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            margin: auto;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            text-decoration: none;
+            color: white;
+        }
+        
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 20px;
+            font-size: 2.2rem;
+        }
+        
+        .score-summary {
+            text-align: center;
+            margin: 20px 0 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 12px;
+            font-size: 1.1rem;
+        }
+        
+        .score-percentage {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        
+        .question {
+            margin: 30px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 5px solid #e9ecef;
+        }
+        
+        .question h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .answer-row {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            gap: 10px;
+        }
+        
+        .correct {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .incorrect {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .explanation {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .explanation-label {
+            font-weight: 600;
+            color: #1976d2;
+            margin-bottom: 5px;
+        }
+        
+       
+        .status-icon {
+            font-size: 1.2rem;
+            margin-right: 5px;
+        }
+        
+        .divider {
+            border: none;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #e9ecef, transparent);
+            margin: 30px 0;
+        }
+        
+       
+        .bottom-nav {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            text-decoration: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin: 0 10px;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            text-decoration: none;
+            color: white;
+        }
+        
+        .nav-btn.summarizer {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .home-btn {
+                position: static;
+                display: block;
+                text-align: center;
+                margin-bottom: 20px;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                margin-top: 10px;
+            }
+            
+            .bottom-nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                display: block;
+                text-align: center;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <a href="http://localhost:5001" class="home-btn">
+            🏠 Home
+        </a>
+        
+        
+        <h1>Quiz Results</h1>
+        
+        <div class="score-summary">
+            <div>Your Final Score</div>
+            <div class="score-percentage">{{ score }}/{{ total }} ({{ ((score/total)*100)|round|int }}%)</div>
+        </div>
+        
+        
+        {% for item in analysis %}
+            <div class="question">
+                <h3>
+                    {% if item.is_correct %}
+                        <span class="status-icon">✅</span>
+                    {% else %}
+                        <span class="status-icon">❌</span>
+                    {% endif %}
+                    Question {{ loop.index }}: {{ item.question }}
+                </h3>
+                
+                <div class="answer-row">
+                    <strong>Your Answer:</strong>
+                    <span class="{{ 'correct' if item.is_correct else 'incorrect' }}">
+                        {% if item.is_correct %}
+                            ✓ {{ item.selected }}
+                        {% else %}
+                            ✗ {{ item.selected }}
+                        {% endif %}
+                    </span>
+                </div>
+                
+                {% if not item.is_correct %}
+                    <div class="answer-row">
+                        <strong>Correct Answer:</strong>
+                        <span class="correct">✓ {{ item.correct }}</span>
+                    </div>
+                {% endif %}
+                
+                <div class="explanation">
+                    <div class="explanation-label">💡 Explanation:</div>
+                    {{ item.explanation }}
+                </div>
+            </div>
+            
+            {% if not loop.last %}
+                <hr class="divider">
+            {% endif %}
+        {% endfor %}
+        
+        
+        <div class="bottom-nav">
+            <a href="http://localhost:5001" class="nav-btn">
+                🎤 Speech to Text
+            </a>
+            <a href="http://localhost:5002" class="nav-btn summarizer">
+                📝 Summarizer
+            </a>
+            <a href="http://localhost:5003" class="nav-btn">
+                🔄 Take Another Quiz
+            </a>
+        </div>
+    </div>
+</body>
+</html>
