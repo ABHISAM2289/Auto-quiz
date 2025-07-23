@@ -444,7 +444,6 @@ def process_full_audio_for_chunking(parent_job_id, original_file_path, duration)
 
 @app.route("/", methods=["GET"])
 def index():
-    """Renders the main HTML page."""
     return render_template("index.html")
 
 @app.route("/transcribe", methods=["POST"])
@@ -648,10 +647,6 @@ def get_chunked_job_status(job_info):
 
 @app.route("/status/<job_id>", methods=["GET"])
 def status(job_id):
-    """
-    Retrieves the current status of a transcription job.
-    Delegates to appropriate helper based on job type.
-    """
     if job_id not in jobs:
         return jsonify({"error": "Invalid job ID"}), 404
     
