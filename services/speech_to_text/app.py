@@ -33,14 +33,6 @@ jobs = {}
 
 
 def get_audio_duration(file_path):
-    """
-    Retrieves the duration of an audio file using pydub's mediainfo,
-    with a fallback to ffprobe if mediainfo fails.
-    Args:
-        file_path (str): The path to the audio file.
-    Returns:
-        float: The duration of the audio file in seconds, or 0.0 if an error occurs.
-    """
     if not os.path.exists(file_path):
         print(f"[ERROR] get_audio_duration: File not found at {file_path}")
         return 0.0
@@ -87,17 +79,6 @@ def get_audio_duration(file_path):
     return 0.0
 
 def convert_to_flac(input_path, output_path):
-    """
-    Converts an audio file to FLAC format with optimal settings for Google Speech-to-Text.
-    Specifically, it sets the sample rate to 16kHz and audio channels to mono.
-    Args:
-        input_path (str): The path to the input audio file.
-        output_path (str): The path where the converted FLAC file will be saved.
-    Returns:
-        bool: True if conversion is successful, raises an exception otherwise.
-    Raises:
-        Exception: If FFmpeg conversion fails.
-    """
     print(f"[CONVERT] Starting conversion of {input_path} to FLAC...")
     try:
         cmd = [
@@ -124,15 +105,6 @@ def convert_to_flac(input_path, output_path):
         raise
 
 def convert_webm_to_mp3(input_path, output_path):
-    """
-    Converts a WebM audio file (typically from browser recording) to MP3 format.
-    Sets sample rate to 16kHz and channels to mono for Speech-to-Text optimization.
-    Args:
-        input_path (str): Path to the input WebM file.
-        output_path (str): Path where the converted MP3 file will be saved.
-    Returns:
-        bool: True if conversion is successful, raises an exception otherwise.
-    """
     print(f"[CONVERT] Converting WebM {input_path} to MP3 {output_path}...")
     try:
         cmd = [
@@ -169,18 +141,6 @@ def convert_webm_to_mp3(input_path, output_path):
         raise
 
 def split_audio_into_chunks(input_path, output_dir, base_filename, chunk_duration):
-    """
-    Splits an audio file into smaller FLAC chunks using ffmpeg.
-    Args:
-        input_path (str): Path to the input audio file.
-        output_dir (str): Directory to save the output chunks.
-        base_filename (str): Base name for the output chunk files (e.g., "job_id").
-        chunk_duration (int): Duration of each chunk in seconds.
-    Returns:
-        list: A list of paths to the created FLAC chunk files.
-    Raises:
-        Exception: If FFmpeg splitting fails.
-    """
     print(f"[SPLIT] Starting audio splitting for {input_path} into {chunk_duration}s chunks...")
     output_chunk_paths = []
     duration = get_audio_duration(input_path) 
@@ -226,16 +186,6 @@ def split_audio_into_chunks(input_path, output_dir, base_filename, chunk_duratio
     return output_chunk_paths
 
 def upload_to_gcs(file_path, blob_name):
-    """
-    Uploads a file to Google Cloud Storage.
-    Args:
-        file_path (str): The local path of the file to upload.
-        blob_name (str): The desired name of the blob in GCS.
-    Returns:
-        str: The GCS URI of the uploaded file.
-    Raises:
-        Exception: If GCS upload fails.
-    """
     print(f"[UPLOAD] Starting upload of {file_path} to GCS bucket {GCS_BUCKET_NAME} as {blob_name}...")
     try:
         client = storage.Client()
@@ -264,13 +214,6 @@ def delete_from_gcs(blob_name):
         print(f"[CLEANUP WARN] Could not delete GCS blob {blob_name}: {e}")
 
 def transcribe_single_file_async(job_id, original_audio_path):
-    """
-    Performs asynchronous audio transcription for a single file (no chunking).
-    This function runs in a separate thread. This path converts to FLAC.
-    Args:
-        job_id (str): Unique identifier for the transcription job.
-        original_audio_path (str): The local path of the original audio file.
-    """
     flac_path = None
     blob_name = f"{job_id}.flac" 
     try:
@@ -337,13 +280,6 @@ def transcribe_single_file_async(job_id, original_audio_path):
             print(f"[CLEANUP] Deleted FLAC local file: {flac_path}")
 
 def transcribe_mic_direct_async(job_id, mp3_audio_path):
-    """
-    Performs asynchronous audio transcription for microphone-recorded MP3 files directly.
-    This function runs in a separate thread.
-    Args:
-        job_id (str): Unique identifier for the transcription job.
-        mp3_audio_path (str): The local path of the MP3 audio file.
-    """
     blob_name = f"{job_id}.mp3" 
     gcs_uri = None
     try:
@@ -401,10 +337,6 @@ def transcribe_mic_direct_async(job_id, mp3_audio_path):
 
 
 def transcribe_chunk_async(parent_job_id, chunk_index, chunk_path, chunk_blob_name):
-    """
-    Performs asynchronous audio transcription for a single chunk.
-    Updates the status of this specific chunk within the parent job.
-    """
     gcs_uri = None
     try:
         jobs[parent_job_id]["chunks"][chunk_index]["status"] = "uploading_chunk"
@@ -461,10 +393,6 @@ def transcribe_chunk_async(parent_job_id, chunk_index, chunk_path, chunk_blob_na
 
 
 def process_full_audio_for_chunking(parent_job_id, original_file_path, duration):
-    """
-    Manages the splitting, chunk transcription, and final reassembly for a parent job.
-    Runs in a separate thread initiated by the /transcribe endpoint.
-    """
     try:
         jobs[parent_job_id]["status"] = "splitting_audio"
         chunk_paths = split_audio_into_chunks(
@@ -521,11 +449,6 @@ def index():
 
 @app.route("/transcribe", methods=["POST"])
 def transcribe():
-    """
-    Handles audio file uploads and initiates transcription based on file duration.
-    If mic_mode is true, it converts WebM to MP3 and processes it directly.
-    Otherwise, if file > 30 mins, it's chunked. Else, it's transcribed as a single FLAC file.
-    """
     if 'file' not in request.files:
         return jsonify({"error": "No file uploaded"}), 400
 
@@ -655,7 +578,6 @@ def get_single_job_status(job_info):
     }
 
 def get_chunked_job_status(job_info):
-    """Aggregates and formats status for a chunked transcription job, including partial transcript."""
     total_chunks = len(job_info["chunks"])
     completed_chunks = 0
     errored_chunks = 0
@@ -746,11 +668,6 @@ def status(job_id):
 
 @app.route("/latest_transcript", methods=["GET"])
 def latest_transcript():
-    """
-    Retrieves the last successfully transcribed transcript from a local file.
-    Returns:
-        JSON: A JSON response containing the transcript, or an error if not found.
-    """
     try:
         with open("latest_transcript.json", "r", encoding="utf-8") as f:
             data = json.load(f)
