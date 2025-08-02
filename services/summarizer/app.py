@@ -6,7 +6,7 @@ import io
 app = Flask(__name__)
 
 genai.configure(api_key="AIzaSyBBGllnIZdo11cUjURk7d3V46xqgYmjIWc")  
-SPEECH_TO_TEXT_API = "http://127.0.0.1:5001/latest_transcript"
+SPEECH_TO_TEXT_API = "http://40.90.194.113:5003/latest_transcript"
 
 latest_summary_text = None
 
