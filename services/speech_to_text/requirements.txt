@@ -2,3 +2,4 @@ Flask
 google-cloud-speech
 google-cloud-storage
 pydub
+google-auth
