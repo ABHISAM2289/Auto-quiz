@@ -23,12 +23,12 @@ pipeline {
 
         stage('Build and Deploy') {
             steps {
-                dir('Auto-quiz') {
+                
                     sh '''
                         docker-compose build
                         docker-compose up -d
                     '''
-                }
+                
             }
         }
     }
