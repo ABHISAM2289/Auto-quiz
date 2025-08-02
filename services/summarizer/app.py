@@ -2,10 +2,14 @@ from flask import Flask, request, jsonify, render_template, send_file
 import requests
 import google.generativeai as genai
 import io
+import os
 
 app = Flask(__name__)
 
-genai.configure(api_key="AIzaSyAMqNwjBY9i8N8nkK_0q7d0dNiZSAX-2wk")  
+
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+
+genai.configure(api_key=GEMINI_API_KEY)  
 SPEECH_TO_TEXT_API = "http://40.90.194.113:5001/latest_transcript"
 
 latest_summary_text = None
