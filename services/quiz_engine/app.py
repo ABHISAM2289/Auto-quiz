@@ -9,8 +9,8 @@ app = Flask(__name__)
 
 genai.configure(api_key="AIzaSyBBGllnIZdo11cUjURk7d3V46xqgYmjIWc")
 
-SUMMARIZER_GENERATE_API = "http://127.0.0.1:5002/"
-SUMMARIZER_LATEST_API = "http://127.0.0.1:5002/latest_summary"
+SUMMARIZER_GENERATE_API = "http://40.90.194.113:5002/"
+SUMMARIZER_LATEST_API = "http://40.90.194.113:5002/latest_summary"
 
 @app.route("/", methods=["GET", "POST"])
 def quiz_home():
