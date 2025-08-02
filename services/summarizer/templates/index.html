@@ -215,12 +215,12 @@
 
         function goBackToTranscription() {
             
-            if (document.referrer && document.referrer.includes('localhost:5001')) {
+            if (document.referrer && document.referrer.includes('http://40.90.194.113:5001')) {
                
                 window.history.back();
             } else {
                 
-                window.location.href = 'http://localhost:5001/';
+                window.location.href = 'http://40.90.194.113:5001/';
             }
         }
 
