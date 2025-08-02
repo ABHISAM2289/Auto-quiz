@@ -8,7 +8,8 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/ABHISAM2289/Auto-quiz.git'
+                git branch: 'main', url: 'https://github.com/ABHISAM2289/Auto-quiz.git'
+
             }
         }
 
