@@ -12,14 +12,22 @@ pipeline {
             }
         }
 
+        stage('Stop Existing Containers') {
+            steps {
+                dir('Auto-quiz') {
+                    sh 'docker-compose down || true'
+                }
+            }
+        }
+
         stage('Build and Deploy') {
             steps {
-                sh '''
-                   cd Auto-quiz
-                  docker-compose down
-                  docker-compose build
-                  docker-compose up -d
-                  '''
+                dir('Auto-quiz') {
+                    sh '''
+                        docker-compose build
+                        docker-compose up -d
+                    '''
+                }
             }
         }
     }
