@@ -16,7 +16,7 @@ app.config["UPLOAD_FOLDER"] = "temp"
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(os.path.dirname(__file__), "gcloud.json")
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(os.path.dirname(__file__), "gcloud (2).json")
 
 
 GCS_BUCKET_NAME = "autoquiz"
