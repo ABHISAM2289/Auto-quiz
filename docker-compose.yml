@@ -6,7 +6,7 @@ services:
     ports:
       - "5001:5001"
     restart: always
-    command: ["python", "app.py]
+    command: ["python", "app.py"]
 
   summarizer:
     build: ./services/summarizer
