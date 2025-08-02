@@ -9,7 +9,6 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 git branch: 'main', url: 'https://github.com/ABHISAM2289/Auto-quiz.git'
-
             }
         }
 
@@ -23,22 +22,22 @@ pipeline {
 
         stage('Build and Deploy') {
             steps {
-                
+                dir('Auto-quiz') {
                     sh '''
                         docker-compose build
                         docker-compose up -d
                     '''
-                
+                }
             }
         }
     }
 
     post {
         failure {
-            echo 'Build failed!'
+            echo '❌ Build failed!'
         }
         success {
-            echo 'Build and deployment successful!'
+            echo '✅ Build and deployment successful!'
         }
     }
 }
