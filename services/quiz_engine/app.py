@@ -4,10 +4,14 @@ import google.generativeai as genai
 import json
 import re
 from collections import OrderedDict
+import os
 
 app = Flask(__name__)
 
-genai.configure(api_key="AIzaSyBBGllnIZdo11cUjURk7d3V46xqgYmjIWc")
+
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+
+genai.configure(api_key=GEMINI_API_KEY)
 
 SUMMARIZER_GENERATE_API = "http://40.90.194.113:5002/"
 SUMMARIZER_LATEST_API = "http://40.90.194.113:5002/latest_summary"
