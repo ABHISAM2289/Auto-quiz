@@ -8,7 +8,8 @@ import json
 import subprocess
 from pydub.utils import mediainfo 
 import concurrent.futures 
-import threading 
+import threading
+from google.oauth2 import service_account
 
 app = Flask(__name__)
 app.config["UPLOAD_EXTENSIONS"] = [".mp3", ".wav", ".flac", ".ogg", ".opus", ".webm", ".mp4", ".m4a"]
@@ -16,7 +17,11 @@ app.config["UPLOAD_FOLDER"] = "temp"
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(os.path.dirname(__file__), "gcloud (2).json")
+service_account_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+
+credentials = service_account.Credentials.from_service_account_file(
+    gcloud.json"
+)
 
 
 GCS_BUCKET_NAME = "autoquiz"
