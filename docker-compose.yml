@@ -8,8 +8,9 @@ services:
     restart: always
     command: ["python", "app.py"]
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=/app/gcloud.json  
-
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/gcloud.json
+    volumes:
+      - ./services/speech_to_text/gcloud.json:/app/gcloud.json:ro
 
   summarizer:
     build: ./services/summarizer
@@ -28,4 +29,3 @@ services:
     command: ["python", "app.py"]
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
-
