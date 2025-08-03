@@ -19,7 +19,12 @@ os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
 service_account_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
 
-credentials = service_account.Credentials.from_service_account_file(service_account_path)
+if not service_account_path or not os.path.exists(service_account_path):
+    raise RuntimeError(f"Service account file not found: {service_account_path}")
+
+credentials = service_account.Credentials.from_service_account_file(
+    service_account_path
+)
 
 
 
