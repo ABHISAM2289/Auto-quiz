@@ -41,7 +41,7 @@ pipeline {
                             chmod 644 services/speech_to_text/gcloud.json
 
                             echo "Setting Gemini API Key"
-                            echo $GEMINI_API_KEY
+                            echo "$GEMINI_API_KEY" > services/summarizer/gemini.key
 
                             echo "Building Docker images"
                             DOCKER_BUILDKIT=0 docker-compose build
@@ -56,7 +56,7 @@ pipeline {
 
         stage('Post Actions') {
             steps {
-                echo 'Deployment Complete ✅'
+                echo '🚀 Deployment Complete ✅'
             }
         }
     }
