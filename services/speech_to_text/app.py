@@ -19,9 +19,8 @@ os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
 service_account_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
 
-credentials = service_account.Credentials.from_service_account_file(
-    "gcloud.json"
-)
+credentials = service_account.Credentials.from_service_account_file(service_account_path)
+
 
 
 GCS_BUCKET_NAME = "autoquiz"
