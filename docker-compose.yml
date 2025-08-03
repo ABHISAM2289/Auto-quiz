@@ -8,7 +8,8 @@ services:
     restart: always
     command: ["python", "app.py"]
     environment:
-      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/gcloud.json  
+
 
   summarizer:
     build: ./services/summarizer
