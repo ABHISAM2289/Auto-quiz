@@ -13,11 +13,14 @@ pipeline {
             }
         }
 
-        stage('Stop Existing Containers') {
+        stage('Clean Up Existing Containers & Images') {
             steps {
                 sh '''
-                    echo "Stopping any running containers..."
-                    docker-compose down || true
+                    echo "Stopping and removing containers..."
+                    docker-compose down --volumes --remove-orphans || true
+
+                    echo "Removing dangling images..."
+                    docker image prune -f || true
                 '''
             }
         }
@@ -44,7 +47,7 @@ pipeline {
                             echo "$GEMINI_API_KEY" > services/summarizer/gemini.key
 
                             echo "Building Docker images"
-                            DOCKER_BUILDKIT=0 docker-compose build
+                            docker-compose build --no-cache
 
                             echo "Starting containers"
                             docker-compose up -d
