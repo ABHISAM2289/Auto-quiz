@@ -2,25 +2,22 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_BUILDKIT = '1'
-        COMPOSE_DOCKER_CLI_BUILD = '1'
+        REPO_URL = 'https://github.com/ABHISAM2289/Auto-quiz.git'
     }
 
     stages {
 
         stage('Checkout SCM') {
             steps {
-                // This step pulls Jenkinsfile context if in same repo (optional if cloned manually later)
-                git url: 'https://github.com/ABHISAM2289/Auto-quiz.git', branch: 'main'
+                git branch: 'main', url: "${env.REPO_URL}"
             }
         }
 
-        stage('Clone Repository') {
+        stage('Stop Existing Containers') {
             steps {
                 sh '''
-                    echo "Cloning Auto-quiz repository..."
-                    rm -rf Auto-quiz
-                    git clone https://github.com/ABHISAM2289/Auto-quiz.git
+                    echo "Stopping any running containers..."
+                    docker-compose down || true
                 '''
             }
         }
@@ -33,20 +30,21 @@ pipeline {
                 ]) {
                     dir('Auto-quiz') {
                         sh '''
-                            echo "Injecting Google Cloud credentials"
+                            set -e
 
+                            echo "Injecting Google Cloud credentials"
                             echo "Checking if GCLOUD_JSON is available at: $GCLOUD_JSON"
-                            ls -l "$GCLOUD_JSON" || echo "GCLOUD_JSON file not found!"
+                            ls -l "$GCLOUD_JSON" || { echo "GCLOUD_JSON file not found!"; exit 1; }
 
                             mkdir -p services/speech_to_text
                             cp "$GCLOUD_JSON" services/speech_to_text/gcloud.json
                             chmod 644 services/speech_to_text/gcloud.json
 
                             echo "Setting Gemini API Key"
-                            export GEMINI_API_KEY=$GEMINI_API_KEY
+                            echo $GEMINI_API_KEY
 
                             echo "Building Docker images"
-                            docker-compose build
+                            DOCKER_BUILDKIT=0 docker-compose build
 
                             echo "Starting containers"
                             docker-compose up -d
@@ -58,17 +56,8 @@ pipeline {
 
         stage('Post Actions') {
             steps {
-                echo 'Post-deployment actions like testing or monitoring can be added here.'
+                echo 'Deployment Complete ✅'
             }
-        }
-    }
-
-    post {
-        success {
-            echo '✅ Auto-quiz deployed successfully!'
-        }
-        failure {
-            echo '❌ Deployment failed. Check logs above.'
         }
     }
 }
