@@ -21,32 +21,26 @@ pipeline {
         }
 
         stage('Build and Deploy') {
-            steps {
-                withCredentials([
-                    file(credentialsId: 'gcloud-service-account', variable: 'GCLOUD_JSON'),
-                    string(credentialsId: 'GEMINI_API_SUMMARIZER', variable: 'GEMINI_API_KEY')
-                ]) {
-                    dir('Auto-quiz') {
-                        sh '''
-                            
-                           # Copy secret file to the service directory
-                             cp "$GCLOUD_JSON" services/speech_to_text/gcloud.json
-                             chmod 644 services/speech_to_text/gcloud.json
+  steps {
+    withCredentials([
+      file(credentialsId: 'gcloud-service-account', variable: 'GCLOUD_JSON'),
+      string(credentialsId: 'GEMINI_API_SUMMARIZER', variable: 'GEMINI_API_KEY')
+    ]) {
+      dir('Auto-quiz') {
+        sh '''
+          # Copy service account key to the right place BEFORE docker build
+          cp "$GCLOUD_JSON" services/speech_to_text/gcloud.json
+          chmod 644 services/speech_to_text/gcloud.json
 
+          export GEMINI_API_KEY=$GEMINI_API_KEY
 
-                             export GOOGLE_APPLICATION_CREDENTIALS=/app/gcloud.json
-                             export GEMINI_API_KEY=$GEMINI_API_KEY
-
-                             docker-compose build
-                             docker-compose up -d
-
-
-                        '''
-                    }
-                }
-            }
-        }
+          docker-compose build
+          docker-compose up -d
+        '''
+      }
     }
+  }
+}
 
     post {
         failure {
