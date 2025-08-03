@@ -31,6 +31,8 @@ pipeline {
                             
                            # Copy secret file to the service directory
                              cp "$GCLOUD_JSON" services/speech_to_text/gcloud.json
+                             chmod 644 services/speech_to_text/gcloud.json
+
 
                              export GOOGLE_APPLICATION_CREDENTIALS=/app/gcloud.json
                              export GEMINI_API_KEY=$GEMINI_API_KEY
