@@ -28,12 +28,12 @@ pipeline {
                 ]) {
                     dir('Auto-quiz') {
                         sh '''
-                            export GOOGLE_APPLICATION_CREDENTIALS=$GCLOUD_JSON
+                            # Copy secret file to the speech_to_text service directory
+                            cp "$GCLOUD_JSON" services/speech_to_text/gcloud.json
+
                             export GEMINI_API_KEY=$GEMINI_API_KEY
 
-                            # Build and deploy with the shared GEMINI_API_KEY
                             docker-compose build
-
                             docker-compose up -d
                         '''
                     }
