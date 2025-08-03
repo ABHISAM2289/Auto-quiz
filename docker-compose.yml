@@ -7,6 +7,8 @@ services:
       - "5001:5001"
     restart: always
     command: ["python", "app.py"]
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
 
   summarizer:
     build: ./services/summarizer
@@ -14,6 +16,8 @@ services:
       - "5002:5002"
     restart: always
     command: ["python", "app.py"]
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
 
   quiz_engine:
     build: ./services/quiz_engine
@@ -21,3 +25,6 @@ services:
       - "5003:5003"
     restart: always
     command: ["python", "app.py"]
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+
