@@ -7,19 +7,20 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout SCM') {
             steps {
-                // This checks out your code from GitHub/GitLab/Bitbucket, etc.
-                git url: 'https://your-repo-url.git', branch: 'main'
+                // This step pulls Jenkinsfile context if in same repo (optional if cloned manually later)
+                git url: 'https://github.com/ABHISAM2289/Auto-quiz.git', branch: 'main'
             }
         }
 
         stage('Clone Repository') {
             steps {
                 sh '''
-                    echo "Cloning Auto-quiz repo..."
+                    echo "Cloning Auto-quiz repository..."
                     rm -rf Auto-quiz
-                    git clone https://github.com/your-org/Auto-quiz.git
+                    git clone https://github.com/ABHISAM2289/Auto-quiz.git
                 '''
             }
         }
@@ -57,17 +58,17 @@ pipeline {
 
         stage('Post Actions') {
             steps {
-                echo 'Post-deployment tasks can be added here (tests, health checks, etc.)'
+                echo 'Post-deployment actions like testing or monitoring can be added here.'
             }
         }
     }
 
     post {
         success {
-            echo '✅ Build and deployment completed successfully!'
+            echo '✅ Auto-quiz deployed successfully!'
         }
         failure {
-            echo '❌ Build or deployment failed. Please check logs.'
+            echo '❌ Deployment failed. Check logs above.'
         }
     }
 }
