@@ -13,14 +13,19 @@ pipeline {
             }
         }
 
-        stage('Clean Up Existing Containers & Images') {
+        stage('Clean Up Docker Environment') {
             steps {
                 sh '''
-                    echo "Stopping and removing containers..."
+                    echo "🧹 Stopping and removing all containers..."
                     docker-compose down --volumes --remove-orphans || true
 
-                    echo "Removing dangling images..."
-                    docker image prune -f || true
+                    echo "🧹 Removing all unused containers, networks, images, and volumes..."
+                    docker system prune -a -f || true
+
+                    echo "🧹 Removing dangling volumes..."
+                    docker volume prune -f || true
+
+                    echo "✅ Clean up complete."
                 '''
             }
         }
@@ -35,7 +40,7 @@ pipeline {
                         sh '''
                             set -e
 
-                            echo "Injecting Google Cloud credentials"
+                            echo "🔐 Injecting Google Cloud credentials"
                             echo "Checking if GCLOUD_JSON is available at: $GCLOUD_JSON"
                             ls -l "$GCLOUD_JSON" || { echo "GCLOUD_JSON file not found!"; exit 1; }
 
@@ -43,14 +48,14 @@ pipeline {
                             cp "$GCLOUD_JSON" services/speech_to_text/gcloud.json
                             chmod 644 services/speech_to_text/gcloud.json
 
-                            echo "Setting Gemini API Key"
+                            echo "🔐 Writing Gemini API key to file"
                             echo "$GEMINI_API_KEY" > services/summarizer/gemini.key
 
-                            echo "Building Docker images"
-                            docker-compose build --no-cache
+                            echo "🐳 Building Docker images (no cache)"
+                            DOCKER_BUILDKIT=0 docker-compose build --no-cache
 
-                            echo "Starting containers"
-                            docker-compose up -d
+                            echo "🚀 Starting containers"
+                            docker-compose up -d --force-recreate
                         '''
                     }
                 }
@@ -59,7 +64,7 @@ pipeline {
 
         stage('Post Actions') {
             steps {
-                echo '🚀 Deployment Complete ✅'
+                echo '✅ Deployment Completed Successfully 🚀'
             }
         }
     }
